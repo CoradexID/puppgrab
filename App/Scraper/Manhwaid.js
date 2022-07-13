@@ -108,6 +108,7 @@ class Scraper {
       results.coverPath = filepath;
     }
     
+    return Promise.resolve(results);
   }
 
   async goto(url) {
