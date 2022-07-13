@@ -21,7 +21,16 @@ class Scraper {
     }
     this.browser = await puppeteer.launch(options);
     this.page = await this.browser.newPage();
-    return new Promise.resolve(true);
+    return Promise.resolve(true);
+  }
+  
+  async getManga(url) {
+    
+  }
+  
+  async goto(url) {
+    await this.page.goto(url, {waitUntil: 'networkidle0'});
+    return Promise.resolve(true);
   }
   
   async end() {
