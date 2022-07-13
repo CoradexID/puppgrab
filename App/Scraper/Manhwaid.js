@@ -29,7 +29,7 @@ class Scraper {
     fs.emptyDirSync(process.env.DOWNLOAD_LOCAL_PATH);
     await this.goto(url);
     await this.page.waitForSelector('li.wp-manga-chapter');
-    
+
     const results = await this.page.evaluate(() => {
       const title = document.querySelector('.post-title h1').innerText.trim();
       const sinopsys = document.querySelector('.summary__content p').innerText.trim();
@@ -99,7 +99,7 @@ class Scraper {
         });
       });
     });
-    
+
     if (downloadCover) {
       const time = functions.getTime();
       const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
@@ -107,21 +107,15 @@ class Scraper {
       await functions.downloadImage(cover, filepath);
       results.coverPath = filepath;
     }
-    
+
     return Promise.resolve(results);
   }
-  
-   async getFeed() {
-     await this.goto(MAIN_URL);
-     const results = await this.page.evaluate(() => {
-       
-     });
-    return axios.get(MAIN_URL).then((res) => {
-      const html = res.data;
-      const dom = new JSDOM(html).window.document;
 
-      const mangas = dom.querySelectorAll('.page-listing-item .manga');
-      
+  async getFeed() {
+    await this.goto(MAIN_URL);
+    const results = await this.page.evaluate(() => {
+      const mangas = document.querySelectorAll('.page-listing-item .manga');
+
       const results = [];
       for (const manga of mangas) {
         results.push({
@@ -130,10 +124,9 @@ class Scraper {
         })
       }
 
-      return new Promise((resolve, reject) => {
-        resolve(results);
-      });
+      return results;
     });
+    return Promise.resolve(results);
   }
 
   async goto(url) {
