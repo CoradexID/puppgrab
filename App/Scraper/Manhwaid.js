@@ -24,90 +24,97 @@ class Scraper {
     this.page = await this.browser.newPage();
     return Promise.resolve(true);
   }
-  
+
   async getManga(url, downloadCover = true) {
     fs.emptyDirSync(process.env.DOWNLOAD_LOCAL_PATH);
     await this.goto(url);
     await this.page.waitForSelector('li.wp-manga-chapter');
     const results = await this.page.evaluate(() => {
-          const title = document.querySelector('.post-title h1').textContent.trim();
-    const sinopsys = document.querySelector('.summary__content p').textContent.trim();
-    
-    let cover = document.querySelector('.summary_image a img').src;
-    let coverPath = null;
-    if (downloadCover) {
-      const time = functions.getTime();
-      const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
-      const filepath = process.env.DOWNLOAD_LOCAL_PATH + filename;
-      await functions.downloadImage(cover, filepath);
-      coverPath = filepath;
-    }
-    
-    const alternative = document.querySelector('.alternative') ? document.querySelector('.alternative').textContent.trim() : '';
-    const score = document.querySelector('span.score').textContent.trim();
-    const tables = document.querySelectorAll('.post-content_item');
+      const title = document.querySelector('.post-title h1').textContent.trim();
+      const sinopsys = document.querySelector('.summary__content p').textContent.trim();
 
-    let [type, status, published, author, artist] = Array(5).fill('');
-    for (const table of tables) {
-      const innerText = table.textContent;
-      if (innerText.includes('Type')) {
-        type = innerText.replace('Type', '').trim();
+      let cover = document.querySelector('.summary_image a img').src;
+      let coverPath = null;
+      if (downloadCover) {
+        const time = functions.getTime();
+        const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
+        const filepath = process.env.DOWNLOAD_LOCAL_PATH + filename;
+        await functions.downloadImage(cover, filepath);
+        coverPath = filepath;
       }
-      if (innerText.includes('Status')) {
-        status = innerText.replace('Status', '').trim();
-      }
-      if (innerText.includes('Release')) {
-        published = innerText.replace('Release', '').trim();
-      }
-      if (innerText.includes('Author')) {
-        author = innerText.replace('Author', '').trim();
-      }
-      if (innerText.includes('Artist')) {
-        artist = innerText.replace('Artist', '').trim();
-      }
-    }
-    
 
-    const genres = [];
-    const genreTabs = document.querySelectorAll('.genres-content a');
-    for (const genre of genreTabs) {
-      genres.push(genre.textContent.trim());
-    }
-    const chapters = [];
-    const chapterlist = document.querySelectorAll('ul li');
-    for (const chapter of chapterlist) {
-      console.log(chapter.innerHTML);
-      chapters.push({
-        chapter: chapter.querySelector('a').textContent.replace('Chapter ', '').trim(),
-        url: chapter.querySelector('a').href
-      });
-    }
+      const alternative = document.querySelector('.alternative') ? document.querySelector('.alternative').textContent.trim(): '';
+      const score = document.querySelector('span.score').textContent.trim();
+      const tables = document.querySelectorAll('.post-content_item');
 
-    return new Promise((resolve, reject) => {
-      resolve({
-        title,
-        sinopsys,
-        cover,
-        coverPath,
-        score,
-        alternative,
-        type,
+      let [type,
         status,
-        author,
-        artist,
         published,
-        genres,
-        chapters: chapters.reverse()
+        author,
+        artist] = Array(5).fill('');
+      for (const table of tables) {
+        const innerText = table.textContent;
+        if (innerText.includes('Type')) {
+          type = innerText.replace('Type', '').trim();
+        }
+        if (innerText.includes('Status')) {
+          status = innerText.replace('Status', '').trim();
+        }
+        if (innerText.includes('Release')) {
+          published = innerText.replace('Release', '').trim();
+        }
+        if (innerText.includes('Author')) {
+          author = innerText.replace('Author', '').trim();
+        }
+        if (innerText.includes('Artist')) {
+          artist = innerText.replace('Artist', '').trim();
+        }
+      }
+
+
+      const genres = [];
+      const genreTabs = document.querySelectorAll('.genres-content a');
+      for (const genre of genreTabs) {
+        genres.push(genre.textContent.trim());
+      }
+      const chapters = [];
+      const chapterlist = document.querySelectorAll('ul li');
+      for (const chapter of chapterlist) {
+        console.log(chapter.innerHTML);
+        chapters.push({
+          chapter: chapter.querySelector('a').textContent.replace('Chapter ', '').trim(),
+          url: chapter.querySelector('a').href
+        });
+      }
+
+      return new Promise((resolve, reject) => {
+        resolve({
+          title,
+          sinopsys,
+          cover,
+          coverPath,
+          score,
+          alternative,
+          type,
+          status,
+          author,
+          artist,
+          published,
+          genres,
+          chapters: chapters.reverse()
+        });
       });
-    });
     });
   }
-  
+
   async goto(url) {
-    await this.page.goto(url, {waitUntil: 'networkidle0'});
+    await this.page.goto(url,
+      {
+        waitUntil: 'networkidle0'
+      });
     return Promise.resolve(true);
   }
-  
+
   async end() {
     await this.browser.close();
     return new Promise.resolve(true);
