@@ -24,8 +24,9 @@ class Scraper {
     return Promise.resolve(true);
   }
   
-  async getManga(url) {
-    
+  async getManga(url, downloadCover = true) {
+    await this.goto(url);
+    await waitForSelector('');
   }
   
   async goto(url) {
