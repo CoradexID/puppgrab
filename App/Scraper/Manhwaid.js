@@ -29,19 +29,13 @@ class Scraper {
     fs.emptyDirSync(process.env.DOWNLOAD_LOCAL_PATH);
     await this.goto(url);
     await this.page.waitForSelector('li.wp-manga-chapter');
+    
     const results = await this.page.evaluate(() => {
       const title = document.querySelector('.post-title h1').textContent.trim();
       const sinopsys = document.querySelector('.summary__content p').textContent.trim();
 
       let cover = document.querySelector('.summary_image a img').src;
       let coverPath = null;
-      if (downloadCover) {
-        const time = functions.getTime();
-        const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
-        const filepath = process.env.DOWNLOAD_LOCAL_PATH + filename;
-        await functions.downloadImage(cover, filepath);
-        coverPath = filepath;
-      }
 
       const alternative = document.querySelector('.alternative') ? document.querySelector('.alternative').textContent.trim(): '';
       const score = document.querySelector('span.score').textContent.trim();
@@ -78,7 +72,7 @@ class Scraper {
         genres.push(genre.textContent.trim());
       }
       const chapters = [];
-      const chapterlist = document.querySelectorAll('ul li');
+      const chapterlist = document.querySelectorAll('li.wp-manga-chapter');
       for (const chapter of chapterlist) {
         console.log(chapter.innerHTML);
         chapters.push({
@@ -105,6 +99,15 @@ class Scraper {
         });
       });
     });
+    
+    if (downloadCover) {
+      const time = functions.getTime();
+      const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
+      const filepath = process.env.DOWNLOAD_LOCAL_PATH + filename;
+      await functions.downloadImage(cover, filepath);
+      results.coverPath = filepath;
+    }
+    
   }
 
   async goto(url) {
