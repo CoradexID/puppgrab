@@ -31,14 +31,14 @@ class Scraper {
     await this.page.waitForSelector('li.wp-manga-chapter');
     
     const results = await this.page.evaluate(() => {
-      const title = document.querySelector('.post-title h1').textContent.trim();
-      const sinopsys = document.querySelector('.summary__content p').textContent.trim();
+      const title = document.querySelector('.post-title h1').innerText.trim();
+      const sinopsys = document.querySelector('.summary__content p').innerText.trim();
 
       let cover = document.querySelector('.summary_image a img').src;
       let coverPath = null;
 
-      const alternative = document.querySelector('.alternative') ? document.querySelector('.alternative').textContent.trim(): '';
-      const score = document.querySelector('span.score').textContent.trim();
+      const alternative = document.querySelector('.alternative') ? document.querySelector('.alternative').innerText.trim(): '';
+      const score = document.querySelector('span.score').innerText.trim();
       const tables = document.querySelectorAll('.post-content_item');
 
       let [type,
@@ -47,7 +47,7 @@ class Scraper {
         author,
         artist] = Array(5).fill('');
       for (const table of tables) {
-        const innerText = table.textContent;
+        const innerText = table.innerText;
         if (innerText.includes('Type')) {
           type = innerText.replace('Type', '').trim();
         }
@@ -69,14 +69,14 @@ class Scraper {
       const genres = [];
       const genreTabs = document.querySelectorAll('.genres-content a');
       for (const genre of genreTabs) {
-        genres.push(genre.textContent.trim());
+        genres.push(genre.innerText.trim());
       }
       const chapters = [];
       const chapterlist = document.querySelectorAll('li.wp-manga-chapter');
       for (const chapter of chapterlist) {
         console.log(chapter.innerHTML);
         chapters.push({
-          chapter: chapter.querySelector('a').textContent.replace('Chapter ', '').trim(),
+          chapter: chapter.querySelector('a').innerText.replace('Chapter ', '').trim(),
           url: chapter.querySelector('a').href
         });
       }
@@ -109,6 +109,31 @@ class Scraper {
     }
     
     return Promise.resolve(results);
+  }
+  
+   async getFeed() {
+     await this.goto(MAIN_URL);
+     const results = await this.page.evaluate(() => {
+       
+     });
+    return axios.get(MAIN_URL).then((res) => {
+      const html = res.data;
+      const dom = new JSDOM(html).window.document;
+
+      const mangas = dom.querySelectorAll('.page-listing-item .manga');
+      
+      const results = [];
+      for (const manga of mangas) {
+        results.push({
+          title: manga.querySelector('a').getAttribute('title'),
+          url: manga.querySelector('a').href
+        })
+      }
+
+      return new Promise((resolve, reject) => {
+        resolve(results);
+      });
+    });
   }
 
   async goto(url) {
