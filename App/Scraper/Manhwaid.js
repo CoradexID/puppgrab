@@ -104,15 +104,63 @@ class Scraper {
       const time = functions.getTime();
       const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
       const filepath = process.env.DOWNLOAD_LOCAL_PATH + filename;
-      await functions.downloadImage(results.9cover, filepath);
+      await functions.downloadImage(results.cover, filepath);
       results.coverPath = filepath;
     }
 
     return Promise.resolve(results);
   }
-  
+
   async getChapter(url, downloadImage = true, options) {
-    
+    await this.goto(url);
+    await this.page.waitForSelector('.reading-content img');
+    const results = await this.page.evaluate((functions) => {
+      const title = document.querySelector('.headpost h1').textContent.trim();
+
+      let content = '';
+      const sources = [];
+      const contentPath = [];
+
+      const images = document.querySelectorAll('#readerarea img');
+      for (const image of images) {
+        let src = image.src;
+        sources.push(src);
+        if (options.replaceImageDomain) {
+          src = functions.replaceDomain(src, options.replaceImageDomain);
+        }
+        content = content + '<img src="' + src + '"/>';
+      }
+
+      return {
+        title,
+        content,
+        contentPath,
+        sources
+      }
+    }, functions);
+
+    if (downloadContent) {
+      const promises = [];
+      for (let i = 0; i < results.sources.length; i++) {
+        const src = results.sources[i];
+        const filename = (i + 1) + '.jpg';
+        const path = process.env.DOWNLOAD_LOCAL_PATH + filename;
+        results.contentPath.push(path);
+        const promise = new Promise((resolve, reject) => {
+          functions.downloadImage(src, path)
+          .then(resolve)
+          .catch((e) => {
+            console.log(e);
+            resolve();
+          });
+        });
+        promises.push(promise);
+      }
+      await Promise.all(promises);
+    }
+
+    return Promise.resolve(results);
+
   }
 
   async getFeed() {
