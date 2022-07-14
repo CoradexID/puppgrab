@@ -137,7 +137,7 @@ class Scraper {
         contentPath,
         sources
       }
-    }, [functions, options]);
+    }, functions, options);
 
     if (downloadContent) {
       const promises = [];
