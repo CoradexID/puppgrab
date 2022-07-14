@@ -111,7 +111,7 @@ class Scraper {
     return Promise.resolve(results);
   }
 
-  async getChapter(url, downloadImage = true, options = {}) {
+  async getChapter(url, downloadContent = true, options = {}) {
     await this.goto(url);
     await this.page.waitForSelector('.reading-content img');
     const results = await this.page.evaluate((functions, options) => {
