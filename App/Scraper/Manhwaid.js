@@ -104,11 +104,15 @@ class Scraper {
       const time = functions.getTime();
       const filename = time.day + time.hour + time.minute + time.seconds + ".jpg";
       const filepath = process.env.DOWNLOAD_LOCAL_PATH + filename;
-      await functions.downloadImage(results.cover, filepath);
+      await functions.downloadImage(results.9cover, filepath);
       results.coverPath = filepath;
     }
 
     return Promise.resolve(results);
+  }
+  
+  async getChapter(url, downloadImage = true, options) {
+    
   }
 
   async getFeed() {
