@@ -115,7 +115,7 @@ class Scraper {
     await this.goto(url);
     await this.page.waitForSelector('.reading-content img');
     const results = await this.page.evaluate((functions) => {
-      const title = document.querySelector('.headpost h1').textContent.trim();
+      const title = document.querySelector('#chapter-heading').innerText.trim();
 
       let content = '';
       const sources = [];
