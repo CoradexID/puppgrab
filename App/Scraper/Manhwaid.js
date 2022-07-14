@@ -114,7 +114,7 @@ class Scraper {
   async getChapter(url, downloadImage = true, options = {}) {
     await this.goto(url);
     await this.page.waitForSelector('.reading-content img');
-    const results = await this.page.evaluate((functions) => {
+    const results = await this.page.evaluate((functions, options) => {
       const title = document.querySelector('#chapter-heading').innerText.trim();
 
       let content = '';
@@ -137,7 +137,7 @@ class Scraper {
         contentPath,
         sources
       }
-    }, functions);
+    }, [functions, options]);
 
     if (downloadContent) {
       const promises = [];
