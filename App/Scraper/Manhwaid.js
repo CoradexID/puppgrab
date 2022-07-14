@@ -121,7 +121,7 @@ class Scraper {
       const sources = [];
       const contentPath = [];
 
-      const images = document.querySelectorAll('#readerarea img');
+      const images = document.querySelectorAll('.reading-content img');
       for (const image of images) {
         let src = image.src;
         sources.push(src);
