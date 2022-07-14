@@ -9,3 +9,5 @@ const scraper = require('../../App/Scraper/Manhwaid.js');
   
   await scraper.end();
 })();
+
+// https://manhwaid.fun/manga/banging-mother-and-daughter/chapter-7/
