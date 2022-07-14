@@ -139,7 +139,7 @@ class Scraper {
 
   async end() {
     await this.browser.close();
-    return new Promise.resolve(true);
+    return Promise.resolve(true);
   }
 
 }
