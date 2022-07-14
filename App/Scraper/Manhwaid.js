@@ -143,3 +143,5 @@ class Scraper {
   }
 
 }
+
+module.exports = new Scraper();
