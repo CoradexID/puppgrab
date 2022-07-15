@@ -272,8 +272,6 @@ class Database {
       const metas_data = [
         [post.insertId, 'ero_chapter', data.chapter],
         [post.insertId, 'ero_seri', mangaId],
-        [post.insertId, 'wp_discord_mention_flag', 'no'],
-        [post.insertId, 'wp_discord_send_flag', 'yes'],
       ]
       
       await query('INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ?', [metas_data]);
