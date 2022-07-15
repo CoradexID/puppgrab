@@ -9,7 +9,8 @@ const scraper = require('../../App/Scraper/Manhwaid.js');
     const manga = await scraper.getManga(feed.url);
     console.log(manga);
     for (const chapter of manga.chapters) {
-      const chapter = await scraper.getChapter(chapter.url)
+      const chapter = await scraper.getChapter(chapter.url);
+      console.log(chapter);
     }
   }
   
