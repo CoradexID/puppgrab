@@ -1,6 +1,11 @@
 require('dotenv').config();
 const scraper = require('../../App/Scraper/Manhwaid.js');
 
+process.on('SIGINT', async () => {
+  console.log('[#] Closing Browser...');
+  await scraper.end();
+});
+
 (async () => {
   await scraper.start();
   
