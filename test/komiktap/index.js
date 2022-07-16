@@ -1,5 +1,6 @@
 require('dotenv').config();
 const scraper = require('../../App/Scraper/Komiktap.js');
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 (async () => {
   await scraper.start();
