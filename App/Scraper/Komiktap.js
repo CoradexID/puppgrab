@@ -75,7 +75,7 @@ class Scraper {
       for (const chapter of chapterlist) {
         console.log(chapter.innerHTML);
         chapters.push({
-          chapter: chapter.querySelector('a .chapternum').innerText.trim(),
+          chapter: chapter.querySelector('a .chapternum').innerText.replace('Chapter ', '').trim(),
           url: chapter.querySelector('a').href
         });
       }

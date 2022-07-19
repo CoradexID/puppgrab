@@ -31,7 +31,6 @@ async function run(num) {
         for (const chapter of mangaData.chapters) {
           const chapterData = await scraper.getChapter(chapter.url);
           chapterData.chapter = chapter.chapter;
-          chapterData.title = mangaData.title + ' Chapter ' + chapterData.chapter;
           console.log('Posting Chapter', chapterData.chapter);
           const insertedChapter = await db.insertChapter(insertedManga.ID, chapterData);
           console.log(insertedChapter.post_title);
@@ -45,7 +44,6 @@ async function run(num) {
         for (const chapter of chapters) {
           const chapterData = await scraper.getChapter(chapter.url);
           chapterData.chapter = chapter.chapter;
-          chapterData.title = mangaData.title + ' Chapter ' + chapterData.chapter;
           console.log('Posting Chapter', chapterData.chapter);
           const insertedChapter = await db.insertChapter(manga.data.ID, chapterData);
           console.log(insertedChapter.post_title);
