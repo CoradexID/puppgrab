@@ -273,6 +273,7 @@ class Database {
         [post.insertId, 'ero_seri', mangaId],
         [post.insertId, '_pingme', '1'],
         [post.insertId, '_encloseme', '1'],
+        [post.insertId, 'ab_embedgroup', 'a:1:{i:0;a:1:{s:6:"_state";s:8:"expanded";}}'],
       ]
       
       await query('INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ?', [metas_data]);
