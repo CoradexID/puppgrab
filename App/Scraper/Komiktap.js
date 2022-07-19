@@ -53,8 +53,8 @@ class Scraper {
         if (innerText.includes('Status')) {
           status = innerText.replace('Status', '').trim();
         }
-        if (innerText.includes('Release')) {
-          published = innerText.replace('Release', '').trim();
+        if (innerText.includes('Released')) {
+          published = innerText.replace('Released', '').trim();
         }
         if (innerText.includes('Author')) {
           author = innerText.replace('Author', '').trim();
@@ -173,6 +173,24 @@ class Scraper {
           title : manga.getAttribute('title'),
           url : manga.href 
         });
+      }
+
+      return results;
+    });
+    return Promise.resolve(results);
+  }
+  
+  async getAZ() {
+    await this.goto('https://194.233.66.232/manga/list-mode');
+    const results = await this.page.evaluate(() => {
+      const lists = document.querySelectorAll('a.series');
+      const results = [];
+      
+      for(const list of lists) {
+        results.push({
+          title: list.innerText.trim(),
+          url: list.href
+        })
       }
 
       return results;

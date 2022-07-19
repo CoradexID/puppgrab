@@ -58,10 +58,10 @@ class Scraper {
           published = innerText.replace('Release', '').trim();
         }
         if (innerText.includes('Author')) {
-          author = innerText.replace('Author', '').trim();
+          author = innerText.replace('Author(s)', '').trim();
         }
         if (innerText.includes('Artist')) {
-          artist = innerText.replace('Artist', '').trim();
+          artist = innerText.replace('Artist(s)', '').trim();
         }
       }
 
