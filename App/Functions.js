@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
-const client = require('https');
+const https = require('https');
+const http = require('http');
 const serializer = require('php-serialize');
 
 class Functions {
@@ -16,6 +17,8 @@ class Functions {
 
   downloadImage(url, filepath) {
     return new Promise((resolve, reject) => {
+      const uri = new URL(url);
+      const client = (uri.protocol == "https:") ? https : http;
       client.get(url, (res) => {
         if (res.statusCode === 200) {
           res.pipe(fs.createWriteStream(filepath))
