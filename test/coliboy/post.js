@@ -14,7 +14,7 @@ const Database = require(process.env.HOME_DIR + 'App/Database/' + process.env.MA
       contentPath: [],
       sources: []
     }
-    const chapter = await db.postChapter(145, data, false);
+    const chapter = await db.insertChapter(145, data, false);
     console.log(chapter.post_title);
   }
   

@@ -32,7 +32,7 @@ async function run(num) {
           const chapterData = await scraper.getChapter(chapter.url);
           chapterData.chapter = chapter.chapter;
           console.log('Posting Chapter', chapterData.chapter);
-          const insertedChapter = await db.insertChapter(insertedManga.ID, chapterData);
+          const insertedChapter = await db.insertChapterPuppeteer(scraper.page, insertedManga.ID, chapterData);
           console.log(insertedChapter.post_title);
         }
       }
@@ -45,7 +45,7 @@ async function run(num) {
           const chapterData = await scraper.getChapter(chapter.url);
           chapterData.chapter = chapter.chapter;
           console.log('Posting Chapter', chapterData.chapter);
-          const insertedChapter = await db.insertChapter(manga.data.ID, chapterData);
+          const insertedChapter = await db.insertChapterPuppeteer(scraper.page, manga.data.ID, chapterData);
           console.log(insertedChapter.post_title);
         }
       }

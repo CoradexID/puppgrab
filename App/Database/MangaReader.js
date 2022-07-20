@@ -144,8 +144,6 @@ class Database {
           [post.insertId, 'ero_score', data.score],
           [post.insertId, 'ero_project', '0'],
           [post.insertId, 'ero_hot', '0'],
-          [post.insertId, 'ero_slider', '0'],
-          [post.insertId, 'ero_autogenerateimgcat', '1'],
         ]
         
         await query('INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ?', [metas_data]);
@@ -271,9 +269,6 @@ class Database {
       const metas_data = [
         [post.insertId, 'ero_chapter', data.chapter],
         [post.insertId, 'ero_seri', mangaId],
-        [post.insertId, '_pingme', '1'],
-        [post.insertId, '_encloseme', '1'],
-        [post.insertId, 'ab_embedgroup', 'a:1:{i:0;a:1:{s:6:"_state";s:8:"expanded";}}'],
       ]
       
       await query('INSERT INTO wp_postmeta (post_id, meta_key, meta_value) VALUES ?', [metas_data]);
@@ -324,6 +319,53 @@ class Database {
     await Promise.all([createGuid, createMeta, createChapter]);
     const result = await query('SELECT * FROM wp_posts WHERE ID = ?', [post.insertId]);
     return Promise.resolve(result[0]);
+  }
+  
+  async insertChapterPuppeteer(page, mangaId, data, uploadContent = true) {
+    if (this.storage) await this.storage.checkConnection();
+    // DECLARING VARIABLES
+    const query = this.query;
+    const nowtime = functions.getTimestamps();
+    let content = data.content;
+    
+    const serie = await query('SELECT * FROM wp_posts WHERE id = ?', [mangaId]);
+    
+    await page.goto(process.env.HOME_URL + 'wp-admin/post-new.php?post_type=post&ts_add_chapter='+mangaId, {waitUntil: 'networkidle0'});
+    
+    if (uploadContent) {
+      const slug = serie[0].post_name;
+      const ch_slug = functions.toSlug(data.chapter);
+      const alphabet = slug[0];
+      const destination = alphabet + '/' + slug + '/' + ch_slug + '/'; 
+      
+      let contents = data.contentPath.map((path) => {
+        const filename = path.split('/').pop();
+        const filepath = destination + filename;
+        const src = process.env.STORAGE_URL + filepath;
+        return '<img src="' + src + '"/>';
+      });
+      contents = contents.join('');
+      content = contents;
+      
+      await this.storage.uploadMultiple(data.contentPath, destination);
+    }
+    
+    await page.evaluate((data, content) => {
+      document.querySelector('#title').value = data.title;
+      document.querySelector('#content').innerHTML = content;
+      document.querySelector('#ero_chapter').value = data.chapter;
+    },  data, content);
+    await Promise.all([
+      await page.click('#publish'),
+      await page.waitForNavigation({
+        waitUntil: 'networkidle2'
+      })
+    ]);
+    
+    const postID = await page.url().split('?post=')[1].split('&action=')[0];
+    const result = await query('SELECT * FROM wp_posts WHERE ID = ?', [postID]);
+    return Promise.resolve(result[0]);
+    
   }
 
   async PJCheck(data) {
