@@ -53,6 +53,8 @@ async function run(num) {
   } catch (e) {
     console.log(e.message);
   }
+  
+  num = num + 1;
 
   await scraper.end();
   await db.closeDatabase();
