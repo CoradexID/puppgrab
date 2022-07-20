@@ -485,6 +485,17 @@ class Database {
     
     return Promise.resolve(chapters);
   }
+  
+  async wpLogin (page, username, pass) {
+    await page.goto(process.env.HOME_URL + 'wp-login.php', { waitUntil: 'networkidle2' });
+    await page.waitForSelector('*');
+    await page.type('#user_login', username);
+    await page.type('#user_pass', pass);
+    await Promise.all([
+      await page.click('#wp-submit'),
+      await page.waitForNavigation({ waitUntil: 'networkidle2' })
+    ]);
+  }
 
 }
 

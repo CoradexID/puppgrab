@@ -10,6 +10,7 @@ async function run(num) {
   await scraper.start();
   await db.connectDatabase();
   await db.connectStorage();
+  await db.wpLogin(scraper.page, 'abang', 'abangjago');
 
   try {
     const feeds = await scraper.getAZ();
